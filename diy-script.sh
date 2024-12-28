@@ -65,17 +65,26 @@ chmod 755 package/luci-app-onliner/root/usr/share/onliner/setnlbw.sh
 
 # Themes
 git clone --depth=1 https://github.com/kiddin9/luci-theme-edge package/luci-theme-edge
-git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+git clone --depth=1 https://github.com/lunarmatrix/luci-theme-argon package/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 git clone --depth=1 https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom package/luci-theme-infinityfreedom
 git_sparse_clone main https://github.com/haiibo/packages luci-theme-atmaterial luci-theme-opentomcat luci-theme-netgear
 
-# luci-app-argon-config设置壁纸默认为内建
-sed -i "s/option online_wallpaper 'bing'/option online_wallpaper 'none'/" package/luci-app-argon-config/root/etc/config/argon
-sed -i "s/o\.default = 'bing';/o.default = 'none';/" package/luci-app-argon-config/htdocs/luci-static/resources/view/argon-config.js
+if [ -d "package/luci-app-argon-config" ]; then
+  # 设置Argon主题的登录页面壁纸为内建
+  sed -i "s/option online_wallpaper 'bing'/option online_wallpaper 'none'/" package/luci-app-argon-config/root/etc/config/argon
+  sed -i "s/o\.default = 'bing';/o.default = 'none';/" package/luci-app-argon-config/htdocs/luci-static/resources/view/argon-config.js
+  # 设置Argon主题的登录表单模糊度
+  sed -i "s/option blur '[0-9]*'/option blur '0'/" package/luci-app-argon-config/root/etc/config/argon
+  sed -i "s/option blur_dark '[0-9]*'/option blur_dark '0'/" package/luci-app-argon-config/root/etc/config/argon
+  # 设置Argon主题颜色
+  sed -i "s/option primary '#[0-9a-fA-F]\{6\}'/option primary '#ADD8E6'/" package/luci-app-argon-config/root/etc/config/argon
+  sed -i "s/option dark_primary '#[0-9a-fA-F]\{6\}'/option dark_primary '#c0c0c0'/" package/luci-app-argon-config/root/etc/config/argon
 
+  echo "Argon theme has been customized!"
+fi
 # 更改 Argon 主题背景
-cp -f $GITHUB_WORKSPACE/images/bg1.jpg package/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
+#cp -f $GITHUB_WORKSPACE/images/bg1.jpg package/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
 
 # 取消主题默认设置
 find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/set luci.main.mediaurlbase/d' {} \;
